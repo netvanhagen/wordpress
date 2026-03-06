@@ -552,13 +552,13 @@ class WP_Search_Relevance_Plugin
 
         global $wpdb;
         $table = $this->logs_table();
-        $top = $wpdb->get_results("SELECT search_term, COUNT(*) AS cnt FROM `{$table}` GROUP BY search_term ORDER BY cnt DESC LIMIT 10", ARRAY_A);
-        $no_results = $wpdb->get_results("SELECT search_term, COUNT(*) AS cnt FROM `{$table}` WHERE result_count = 0 GROUP BY search_term ORDER BY cnt DESC LIMIT 10", ARRAY_A);
-        $per_lang = $wpdb->get_results("SELECT lang, COUNT(*) AS cnt FROM `{$table}` GROUP BY lang ORDER BY cnt DESC", ARRAY_A);
+        $top = $wpdb->get_results($wpdb->prepare("SELECT search_term, COUNT(*) AS cnt FROM %s GROUP BY search_term ORDER BY cnt DESC LIMIT 10", $table), ARRAY_A);
+        $no_results = $wpdb->get_results($wpdb->prepare("SELECT search_term, COUNT(*) AS cnt FROM %s WHERE result_count = 0 GROUP BY search_term ORDER BY cnt DESC LIMIT 10", $table), ARRAY_A);
+        $per_lang = $wpdb->get_results($wpdb->prepare("SELECT lang, COUNT(*) AS cnt FROM %s GROUP BY lang ORDER BY cnt DESC", $table), ARRAY_A);
         $rel_table = $this->related_clicks_table();
-        $clicks_target = $wpdb->get_results("SELECT target_post_id, COUNT(*) AS cnt FROM `{$rel_table}` WHERE is_human = 1 GROUP BY target_post_id ORDER BY cnt DESC LIMIT 10", ARRAY_A);
-        $clicks_source = $wpdb->get_results("SELECT source_post_id, COUNT(*) AS cnt FROM `{$rel_table}` WHERE is_human = 1 GROUP BY source_post_id ORDER BY cnt DESC LIMIT 10", ARRAY_A);
-        $click_pairs = $wpdb->get_results("SELECT source_post_id, target_post_id, COUNT(*) AS cnt FROM `{$rel_table}` WHERE is_human = 1 GROUP BY source_post_id, target_post_id ORDER BY cnt DESC LIMIT 10", ARRAY_A);
+        $clicks_target = $wpdb->get_results($wpdb->prepare("SELECT target_post_id, COUNT(*) AS cnt FROM %s WHERE is_human = 1 GROUP BY target_post_id ORDER BY cnt DESC LIMIT 10", $rel_table), ARRAY_A);
+        $clicks_source = $wpdb->get_results($wpdb->prepare("SELECT source_post_id, COUNT(*) AS cnt FROM %s WHERE is_human = 1 GROUP BY source_post_id ORDER BY cnt DESC LIMIT 10", $rel_table), ARRAY_A);
+        $click_pairs = $wpdb->get_results($wpdb->prepare("SELECT source_post_id, target_post_id, COUNT(*) AS cnt FROM %s WHERE is_human = 1 GROUP BY source_post_id, target_post_id ORDER BY cnt DESC LIMIT 10", $rel_table), ARRAY_A);
         $clicks_target = is_array($clicks_target) ? $clicks_target : [];
         $clicks_source = is_array($clicks_source) ? $clicks_source : [];
         $click_pairs = is_array($click_pairs) ? $click_pairs : [];
@@ -752,7 +752,7 @@ class WP_Search_Relevance_Plugin
     {
         $this->guard_ajax('wpsr_index_nonce');
         global $wpdb;
-        $wpdb->query("TRUNCATE TABLE `{$this->index_table()}`");
+        $wpdb->query($wpdb->prepare("TRUNCATE TABLE %s", $this->index_table()));
         $this->bump_related_cache_version();
         wp_send_json_success(true);
     }
@@ -761,7 +761,7 @@ class WP_Search_Relevance_Plugin
     {
         $this->guard_ajax('wpsr_logs_nonce');
         global $wpdb;
-        $wpdb->query("TRUNCATE TABLE `{$this->logs_table()} `");
+        $wpdb->query($wpdb->prepare("TRUNCATE TABLE %s", $this->logs_table()));
         wp_send_json_success(true);
     }
 
@@ -779,7 +779,7 @@ class WP_Search_Relevance_Plugin
     {
         $this->guard_ajax('wpsr_logs_nonce');
         global $wpdb;
-        $wpdb->query("TRUNCATE TABLE `{$this->related_clicks_table()}`");
+        $wpdb->query($wpdb->prepare("TRUNCATE TABLE %s", $this->related_clicks_table()));
         wp_send_json_success(true);
     }
 
@@ -1680,7 +1680,7 @@ class WP_Search_Relevance_Plugin
     private function update_index_meta()
     {
         global $wpdb;
-        $rows = $wpdb->get_results("SELECT post_type, COUNT(*) AS cnt FROM `{$this->index_table()}` GROUP BY post_type", ARRAY_A);
+        $rows = $wpdb->get_results($wpdb->prepare("SELECT post_type, COUNT(*) AS cnt FROM %s GROUP BY post_type", $this->index_table()), ARRAY_A);
         $counts = [];
         foreach ($rows as $row) {
             $counts[$row['post_type']] = (int) $row['cnt'];
