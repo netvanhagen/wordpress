@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP Search Relevance
  * Description: Vervangt WordPress zoeken met een eigen index-gebaseerde relevantiezoeker met WPML, logging en categorie-filter shortcode.
- * Version: 2.3.4
+ * Version: 2.3.5
  * Author: HP van Hagen
  * Requires at least: 6.0
  * Requires PHP: 7.4
@@ -116,7 +116,7 @@ class WP_Search_Relevance_Plugin
         $table = $this->related_clicks_table();
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         $charset_collate = $wpdb->get_charset_collate();
-        dbDelta("CREATE TABLE {$table} (
+        dbDelta("CREATE TABLE `{$table}` (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             source_post_id BIGINT UNSIGNED NOT NULL,
             target_post_id BIGINT UNSIGNED NOT NULL,
@@ -146,7 +146,7 @@ class WP_Search_Relevance_Plugin
         $logs_table = $this->logs_table();
         $related_clicks_table = $this->related_clicks_table();
 
-        dbDelta("CREATE TABLE {$index_table} (
+        dbDelta("CREATE TABLE `{$index_table}` (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             post_id BIGINT UNSIGNED NOT NULL,
             lang VARCHAR(12) NOT NULL DEFAULT 'default',
@@ -162,7 +162,7 @@ class WP_Search_Relevance_Plugin
             UNIQUE KEY post_lang (post_id,lang)
         ) {$charset};");
 
-        dbDelta("CREATE TABLE {$logs_table} (
+        dbDelta("CREATE TABLE `{$logs_table}` (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             search_term TEXT NOT NULL,
             lang VARCHAR(12) NOT NULL DEFAULT 'default',
@@ -173,7 +173,7 @@ class WP_Search_Relevance_Plugin
         ) {$charset};");
 
 
-        dbDelta("CREATE TABLE {$related_clicks_table} (
+        dbDelta("CREATE TABLE `{$related_clicks_table}` (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             source_post_id BIGINT UNSIGNED NOT NULL,
             target_post_id BIGINT UNSIGNED NOT NULL,
@@ -266,7 +266,7 @@ class WP_Search_Relevance_Plugin
             $settings['show_popular_on_no_results'] = empty($input['show_popular_on_no_results']) ? 0 : 1;
         }
         if (isset($input['popular_page_ids'])) {
-            $settings['popular_page_ids'] = array_filter(array_map('intval', explode(',', $input['popular_page_ids'])));
+            $settings['popular_page_ids'] = $this->sanitize_comma_separated_ids($input['popular_page_ids']);
         }
 
         if (array_key_exists('related_module_enabled', $input)) {
@@ -300,7 +300,7 @@ class WP_Search_Relevance_Plugin
             $settings['related_context_homepage'] = empty($input['related_context_homepage']) ? 0 : 1;
         }
         if (isset($input['related_exclude_posts'])) {
-            $settings['related_exclude_posts'] = array_filter(array_map('intval', explode(',', $input['related_exclude_posts'])));
+            $settings['related_exclude_posts'] = $this->sanitize_comma_separated_ids($input['related_exclude_posts']);
         }
         if (array_key_exists('related_click_logging_enabled', $input)) {
             $settings['related_click_logging_enabled'] = empty($input['related_click_logging_enabled']) ? 0 : 1;
@@ -552,13 +552,13 @@ class WP_Search_Relevance_Plugin
 
         global $wpdb;
         $table = $this->logs_table();
-        $top = $wpdb->get_results("SELECT search_term, COUNT(*) AS cnt FROM {$table} GROUP BY search_term ORDER BY cnt DESC LIMIT 10", ARRAY_A);
-        $no_results = $wpdb->get_results("SELECT search_term, COUNT(*) AS cnt FROM {$table} WHERE result_count = 0 GROUP BY search_term ORDER BY cnt DESC LIMIT 10", ARRAY_A);
-        $per_lang = $wpdb->get_results("SELECT lang, COUNT(*) AS cnt FROM {$table} GROUP BY lang ORDER BY cnt DESC", ARRAY_A);
+        $top = $wpdb->get_results("SELECT search_term, COUNT(*) AS cnt FROM `{$table}` GROUP BY search_term ORDER BY cnt DESC LIMIT 10", ARRAY_A);
+        $no_results = $wpdb->get_results("SELECT search_term, COUNT(*) AS cnt FROM `{$table}` WHERE result_count = 0 GROUP BY search_term ORDER BY cnt DESC LIMIT 10", ARRAY_A);
+        $per_lang = $wpdb->get_results("SELECT lang, COUNT(*) AS cnt FROM `{$table}` GROUP BY lang ORDER BY cnt DESC", ARRAY_A);
         $rel_table = $this->related_clicks_table();
-        $clicks_target = $wpdb->get_results("SELECT target_post_id, COUNT(*) AS cnt FROM {$rel_table} WHERE is_human = 1 GROUP BY target_post_id ORDER BY cnt DESC LIMIT 10", ARRAY_A);
-        $clicks_source = $wpdb->get_results("SELECT source_post_id, COUNT(*) AS cnt FROM {$rel_table} WHERE is_human = 1 GROUP BY source_post_id ORDER BY cnt DESC LIMIT 10", ARRAY_A);
-        $click_pairs = $wpdb->get_results("SELECT source_post_id, target_post_id, COUNT(*) AS cnt FROM {$rel_table} WHERE is_human = 1 GROUP BY source_post_id, target_post_id ORDER BY cnt DESC LIMIT 10", ARRAY_A);
+        $clicks_target = $wpdb->get_results("SELECT target_post_id, COUNT(*) AS cnt FROM `{$rel_table}` WHERE is_human = 1 GROUP BY target_post_id ORDER BY cnt DESC LIMIT 10", ARRAY_A);
+        $clicks_source = $wpdb->get_results("SELECT source_post_id, COUNT(*) AS cnt FROM `{$rel_table}` WHERE is_human = 1 GROUP BY source_post_id ORDER BY cnt DESC LIMIT 10", ARRAY_A);
+        $click_pairs = $wpdb->get_results("SELECT source_post_id, target_post_id, COUNT(*) AS cnt FROM `{$rel_table}` WHERE is_human = 1 GROUP BY source_post_id, target_post_id ORDER BY cnt DESC LIMIT 10", ARRAY_A);
         $clicks_target = is_array($clicks_target) ? $clicks_target : [];
         $clicks_source = is_array($clicks_source) ? $clicks_source : [];
         $click_pairs = is_array($click_pairs) ? $click_pairs : [];
@@ -622,10 +622,6 @@ class WP_Search_Relevance_Plugin
 
     public function save_post_meta($post_id, $post)
     {
-        if (!isset($_POST['wpsr_meta_nonce_field']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wpsr_meta_nonce_field'])), 'wpsr_meta_nonce')) {
-            return;
-        }
-
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;
         }
@@ -634,7 +630,15 @@ class WP_Search_Relevance_Plugin
             return;
         }
 
-        $exclude = empty($_POST['wpsr_exclude_from_index']) ? 0 : 1;
+        // Verify nonce for security
+        $nonce = isset($_POST['wpsr_meta_nonce_field']) ? sanitize_text_field(wp_unslash($_POST['wpsr_meta_nonce_field'])) : '';
+        if (!wp_verify_nonce($nonce, 'wpsr_meta_nonce')) {
+            return;
+        }
+
+        // Sanitize checkbox input
+        $exclude = isset($_POST['wpsr_exclude_from_index']) ? (int) sanitize_text_field(wp_unslash($_POST['wpsr_exclude_from_index'])) : 0;
+        $exclude = ($exclude === 1) ? 1 : 0;
         update_post_meta($post_id, self::META_EXCLUDE, $exclude);
     }
 
@@ -748,7 +752,7 @@ class WP_Search_Relevance_Plugin
     {
         $this->guard_ajax('wpsr_index_nonce');
         global $wpdb;
-        $wpdb->query("TRUNCATE TABLE {$this->index_table()}");
+        $wpdb->query("TRUNCATE TABLE `{$this->index_table()}`");
         $this->bump_related_cache_version();
         wp_send_json_success(true);
     }
@@ -757,7 +761,7 @@ class WP_Search_Relevance_Plugin
     {
         $this->guard_ajax('wpsr_logs_nonce');
         global $wpdb;
-        $wpdb->query("TRUNCATE TABLE {$this->logs_table()}");
+        $wpdb->query("TRUNCATE TABLE `{$this->logs_table()} `");
         wp_send_json_success(true);
     }
 
@@ -767,7 +771,7 @@ class WP_Search_Relevance_Plugin
         global $wpdb;
         $settings = $this->get_settings();
         $date = gmdate('Y-m-d H:i:s', strtotime('-' . (int) $settings['retention_days'] . ' days'));
-        $wpdb->query($wpdb->prepare("DELETE FROM {$this->logs_table()} WHERE searched_at < %s", $date));
+        $wpdb->query($wpdb->prepare("DELETE FROM `{$this->logs_table()}` WHERE searched_at < %s", $date));
         wp_send_json_success(true);
     }
 
@@ -775,7 +779,7 @@ class WP_Search_Relevance_Plugin
     {
         $this->guard_ajax('wpsr_logs_nonce');
         global $wpdb;
-        $wpdb->query("TRUNCATE TABLE {$this->related_clicks_table()}");
+        $wpdb->query("TRUNCATE TABLE `{$this->related_clicks_table()}`");
         wp_send_json_success(true);
     }
 
@@ -836,7 +840,7 @@ class WP_Search_Relevance_Plugin
         global $wpdb;
         $settings = $this->get_settings();
         $lang = $this->current_language();
-        $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$this->index_table()} WHERE lang = %s", $lang), ARRAY_A);
+        $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM `{$this->index_table()}` WHERE lang = %s", $lang), ARRAY_A);
 
         if (empty($rows)) {
             return [];
@@ -1223,9 +1227,10 @@ class WP_Search_Relevance_Plugin
             return;
         }
 
-        $target = (int) $_GET['wpsr_rel_target'];
-        $source = (int) $_GET['wpsr_rel_source'];
-        $nonce = sanitize_text_field(wp_unslash($_GET['wpsr_rel_nonce']));
+        // Sanitize and validate URL parameters
+        $target = isset($_GET['wpsr_rel_target']) ? (int) sanitize_text_field(wp_unslash($_GET['wpsr_rel_target'])) : 0;
+        $source = isset($_GET['wpsr_rel_source']) ? (int) sanitize_text_field(wp_unslash($_GET['wpsr_rel_source'])) : 0;
+        $nonce = isset($_GET['wpsr_rel_nonce']) ? sanitize_text_field(wp_unslash($_GET['wpsr_rel_nonce'])) : '';
         $nonce_ok = $target > 0 && $source > 0 && wp_verify_nonce($nonce, 'wpsr_rel_click_' . $source . '_' . $target);
         if (!$nonce_ok) {
             return;
@@ -1675,7 +1680,7 @@ class WP_Search_Relevance_Plugin
     private function update_index_meta()
     {
         global $wpdb;
-        $rows = $wpdb->get_results("SELECT post_type, COUNT(*) AS cnt FROM {$this->index_table()} GROUP BY post_type", ARRAY_A);
+        $rows = $wpdb->get_results("SELECT post_type, COUNT(*) AS cnt FROM `{$this->index_table()}` GROUP BY post_type", ARRAY_A);
         $counts = [];
         foreach ($rows as $row) {
             $counts[$row['post_type']] = (int) $row['cnt'];
@@ -1693,10 +1698,32 @@ class WP_Search_Relevance_Plugin
             wp_send_json_error('Geen rechten.');
         }
 
-        $nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
-        if (!wp_verify_nonce($nonce, $action)) {
-            wp_send_json_error('Nonce validatie mislukt.');
+        // Rate limiting: max 10 requests per minute per user
+        $user_id = get_current_user_id();
+        $rate_limit_key = 'wpsr_rate_limit_' . $user_id;
+        $current_minute = floor(time() / 60);
+
+        $rate_data = get_transient($rate_limit_key);
+        if (!$rate_data) {
+            $rate_data = ['minute' => $current_minute, 'count' => 0];
         }
+
+        // Reset counter if we're in a new minute
+        if ($rate_data['minute'] !== $current_minute) {
+            $rate_data = ['minute' => $current_minute, 'count' => 0];
+        }
+
+        // Check rate limit
+        if ($rate_data['count'] >= 10) {
+            wp_send_json_error('Te veel requests. Probeer over een minuut opnieuw.');
+        }
+
+        // Increment counter
+        $rate_data['count']++;
+        set_transient($rate_limit_key, $rate_data, 120); // Store for 2 minutes
+
+        // Use check_ajax_referer which is WordPress best-practice for AJAX endpoints
+        check_ajax_referer($action, 'nonce', true);
     }
 
 
@@ -1903,6 +1930,22 @@ class WP_Search_Relevance_Plugin
     {
         $settings = get_option(self::OPTION_KEY, []);
         return wp_parse_args($settings, $this->defaults);
+    }
+
+    /**
+     * Sanitize comma-separated ID list into array of integers.
+     * Handles both string and array input.
+     *
+     * @param mixed $input Comma-separated string or array
+     * @return array Array of positive integers
+     */
+    private function sanitize_comma_separated_ids($input)
+    {
+        if (empty($input)) {
+            return [];
+        }
+        $input_str = is_array($input) ? implode(',', $input) : (string) $input;
+        return array_filter(array_map('intval', explode(',', $input_str)));
     }
 
     private function index_table()
