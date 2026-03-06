@@ -5,9 +5,9 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 
 global $wpdb;
 
-$wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}wpsr_index");
-$wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}wpsr_logs");
-$wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}wpsr_related_clicks");
+$wpdb->query($wpdb->prepare("DROP TABLE IF EXISTS %s", $wpdb->prefix . 'wpsr_index'));
+$wpdb->query($wpdb->prepare("DROP TABLE IF EXISTS %s", $wpdb->prefix . 'wpsr_logs'));
+$wpdb->query($wpdb->prepare("DROP TABLE IF EXISTS %s", $wpdb->prefix . 'wpsr_related_clicks'));
 
 delete_option('wpsr_settings');
 delete_option('wpsr_index_meta');
