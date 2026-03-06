@@ -1,0 +1,242 @@
+# Dutch translation for AI Summary Bullets
+# Copyright (C) 2025 HP van Hagen
+# This file is distributed under the same license as the AI Summary Bullets package.
+# HP van Hagen, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: AI Summary Bullets 1.3.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ai-summary-bullets\n"
+"POT-Creation-Date: 2025-08-19 10:00:00+00:00\n"
+"PO-Revision-Date: 2025-08-19 13:07+0200\n"
+"Last-Translator: HP van Hagen\n"
+"Language-Team: HP van Hagen\n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.6\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e;_x;esc_html__;esc_html_e;esc_attr__;esc_attr_e\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: ai-summary-bullets.php:38
+msgid "Settings"
+msgstr "Instellingen"
+
+#: ai-summary-bullets.php:39
+msgid "Donate"
+msgstr "Doneer"
+
+#: ai-summary-bullets.php:126
+msgid "The default prompt has been restored."
+msgstr "De standaard prompt is hersteld."
+
+#: ai-summary-bullets.php:177
+msgid "AI Summary Settings"
+msgstr "AI Summary instellingen"
+
+#: ai-summary-bullets.php:180
+msgid "Do you find this plugin useful? Please consider a small donation to support its development!"
+msgstr "Vind je deze plugin handig? Overweeg een kleine donatie om de ontwikkeling te ondersteunen!"
+
+#: ai-summary-bullets.php:181
+msgid "Donate via PayPal"
+msgstr "Doneer via PayPal"
+
+#: ai-summary-bullets.php:188
+msgid "OpenAI API key"
+msgstr "OpenAI API key"
+
+#: ai-summary-bullets.php:192
+msgid "Intro sentence"
+msgstr "Introzin"
+
+#: ai-summary-bullets.php:196
+msgid "Number of bullets"
+msgstr "Aantal bullets"
+
+#: ai-summary-bullets.php:196
+msgid "Default 4. Higher = more bullets."
+msgstr "Standaard 4. Hoger = meer bullets."
+
+#: ai-summary-bullets.php:200
+msgid "Language"
+msgstr "Taal"
+
+#: ai-summary-bullets.php:209
+msgid "Model"
+msgstr "Model"
+
+#: ai-summary-bullets.php:216
+msgid "Refresh models"
+msgstr "Refresh modellen"
+
+#: ai-summary-bullets.php:217
+msgid "Retrieves the latest models from OpenAI."
+msgstr "Haalt actuele modellen op van OpenAI."
+
+#: ai-summary-bullets.php:221
+msgid "Frame around summary"
+msgstr "Kader rond samenvatting"
+
+#: ai-summary-bullets.php:223
+msgid "Show frame (recommended)"
+msgstr "Kader tonen (aanbevolen)"
+
+#: ai-summary-bullets.php:225
+msgid "Padding top"
+msgstr "Padding boven"
+
+#: ai-summary-bullets.php:226
+msgid "right"
+msgstr "rechts"
+
+#: ai-summary-bullets.php:227
+msgid "bottom"
+msgstr "onder"
+
+#: ai-summary-bullets.php:228
+msgid "left"
+msgstr "links"
+
+#: ai-summary-bullets.php:230
+msgid "Width automatically follows the width of your post content (width:100%)."
+msgstr "Breedte volgt automatisch de breedte van je bericht-content (width:100%)."
+
+#: ai-summary-bullets.php:234
+msgid "Max. input (characters) to AI"
+msgstr "Max. invoer (tekens) naar AI"
+
+#: ai-summary-bullets.php:237
+msgid "Content that is too long is truncated at a word boundary to limit errors and costs."
+msgstr "Te lange inhoud wordt netjes afgekapt op woordgrens om fouten en kosten te beperken."
+
+#: ai-summary-bullets.php:241
+msgid "Cost estimation"
+msgstr "Kostenindicatie"
+
+#: ai-summary-bullets.php:243
+msgid "Show estimated and actual costs (fill in rates)"
+msgstr "Toon geschatte en werkelijke kosten (vul tarieven in)"
+
+#: ai-summary-bullets.php:245
+msgid "Price prompt (per 1K tokens)"
+msgstr "Prijs prompt (per 1K tokens)"
+
+#: ai-summary-bullets.php:246
+msgid "Price completion (per 1K tokens)"
+msgstr "Prijs completion (per 1K tokens)"
+
+#: ai-summary-bullets.php:248
+msgid "Leave empty or 0.00 if you do not want to show a cost indication."
+msgstr "Laat leeg of 0.00 als je geen kostenindicatie wilt tonen."
+
+#: ai-summary-bullets.php:252
+msgid "Where to allow summaries"
+msgstr "Waar samenvatten toestaan"
+
+#: ai-summary-bullets.php:254
+msgid "Posts"
+msgstr "Berichten"
+
+#: ai-summary-bullets.php:255
+msgid "Pages"
+msgstr "Pagina’s"
+
+#: ai-summary-bullets.php:256
+msgid "Default is Posts only."
+msgstr "Standaard alleen Berichten."
+
+#: ai-summary-bullets.php:260
+msgid "Instruction / prompt"
+msgstr "Instructie / prompt"
+
+#: ai-summary-bullets.php:263
+msgid "Placeholder explanation:"
+msgstr "Uitleg placeholders:"
+
+#: ai-summary-bullets.php:265
+msgid "Is replaced by the chosen language (e.g., 'English')."
+msgstr "Wordt vervangen door de gekozen taal (bijv. 'Nederlands')."
+
+#: ai-summary-bullets.php:266
+msgid "Is replaced by the 'Intro sentence' field above."
+msgstr "Wordt vervangen door de hierboven ingevulde 'Introzin'."
+
+#: ai-summary-bullets.php:267
+msgid "Is replaced by the 'Number of bullets' set above."
+msgstr "Wordt vervangen door het hierboven ingestelde 'Aantal bullets'."
+
+#: ai-summary-bullets.php:268
+msgid "Is replaced by the (truncated) content of your post or page."
+msgstr "Wordt vervangen door de (ingekorte) tekst van je bericht of pagina."
+
+#: ai-summary-bullets.php:270
+msgid "Restore Default Prompt"
+msgstr "Standaard Prompt Herstellen"
+
+#: ai-summary-bullets.php:283
+msgid "AI Summary"
+msgstr "AI Samenvatting"
+
+#: ai-summary-bullets.php:292
+msgid "Generate summary"
+msgstr "Maak samenvatting"
+
+#: ai-summary-bullets.php:293
+msgid "Copy"
+msgstr "Kopieer"
+
+#: ai-summary-bullets.php:297
+msgid "The (copyable) summary will appear here…"
+msgstr "Hier verschijnt de (kopieerbare) samenvatting…"
+
+#: ai-summary-bullets.php:298
+msgid "Copy and paste this block at the top of your content."
+msgstr "Kopieer en plak dit blok bovenaan je inhoud."
+
+#: ai-summary-bullets.php:403
+msgid "Generating summary…"
+msgstr "Bezig met samenvatten…"
+
+#: ai-summary-bullets.php:404
+msgid "Done."
+msgstr "Klaar."
+
+#: ai-summary-bullets.php:405
+msgid "Something went wrong. Please check your API key and try again."
+msgstr "Er ging iets mis. Controleer je API-key en probeer opnieuw."
+
+#: ai-summary-bullets.php:406
+msgid "Copied!"
+msgstr "Gekopieerd!"
+
+#: ai-summary-bullets.php:408
+msgid "There is no content yet. Please add content first and save."
+msgstr "Er is nog geen tekst. Voeg eerst inhoud toe en sla op."
+
+#: ai-summary-bullets.php:409
+msgid "Note: content was truncated to max length."
+msgstr "Let op: inhoud is ingekort tot max. lengte."
+
+#: ai-summary-bullets.php:410
+msgid "Input: %1$s chars (~%2$s tokens)."
+msgstr "Invoer: %1$s tekens (~%2$s tokens)."
+
+#: ai-summary-bullets.php:411
+msgid "Actual tokens — prompt: %1$s, completion: %2$s."
+msgstr "Werkelijke tokens — prompt: %1$s, completion: %2$s."
+
+#: ai-summary-bullets.php:412
+msgid "Actual cost: %1$s"
+msgstr "Werkelijke kosten: %1$s"
+
+#: ai-summary-bullets.php:413
+msgid "Refreshing models…"
+msgstr "Modellen vernieuwen…"
+
+#: ai-summary-bullets.php:414
+msgid "Could not refresh models."
+msgstr "Kon modellen niet verversen."
